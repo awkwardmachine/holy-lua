@@ -1,0 +1,7 @@
+local x: number? = nil
+
+if x != nil then
+    print(x)
+else
+    print("no")
+end

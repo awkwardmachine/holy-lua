@@ -1,0 +1,9 @@
+.vscode/
+obj/
+lib/
+bin/
+
+/*.c
+/*.exe
+!/Makefile
+!/.gitignore
