@@ -1,0 +1,11 @@
+.vscode/
+obj/
+lib/
+bin/
+build/
+.xmake/
+
+/*.c
+/*.exe
+!/Makefile
+!/.gitignore

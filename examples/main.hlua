@@ -1,0 +1,22 @@
+enum BoatType
+    SailorBoat
+    Yacht
+end
+
+class Boat
+    public name: string
+    public boat_type: BoatType
+
+    function __init(name: string?, boat_type: BoatType)
+        self.name = name or "Boat"
+        self.boat_type = boat_type
+    end
+
+    public function move()
+        print(self.name .. " is sailing")
+        print(self.boat_type)
+    end
+end
+
+local boat: Boat = Boat(nil, BoatType.Yacht)
+boat.move()
