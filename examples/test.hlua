@@ -1,0 +1,12 @@
+class Vehicle
+    public name: string
+
+    function __init(name: string)
+        self.name = name
+    end
+end
+
+function main()
+    local car: Vehicle = Vehicle("Hello")
+    print(car.name)
+end
