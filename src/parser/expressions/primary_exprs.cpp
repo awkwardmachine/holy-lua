@@ -102,6 +102,9 @@ std::unique_ptr<Expr> Parser::primary() {
   }
 
   error("Expected expression", line);
+  if (!isAtEnd()) {
+      advance();
+  }
   auto expr = std::make_unique<LiteralExpr>((int64_t)0);
   expr->line = line;
   return expr;

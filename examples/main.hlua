@@ -1,3 +1,16 @@
-local x: number? = 5
+function main()
+    for local x = 0, 6, 1 do
+        print(x)
+    end
+    print("")
 
-print(x! + 10)
+    local x = 5
+    -- repeat
+    --     x += 1
+    --     print(x)
+    -- until x == 10
+    while x < 10 do
+        x += 1
+        print(x)
+    end
+end

@@ -7,9 +7,14 @@ std::unique_ptr<WhileStmt> Parser::whileStatement() {
   int whileLine = previous().line;
 
   auto condition = expression();
+  if (!condition) {
+    synchronize();
+    return nullptr;
+  }
 
   if (!match({TokenType::DO})) {
     error("Expected 'do' after while condition", peek().line);
+    synchronize();
     return nullptr;
   }
 
@@ -27,11 +32,16 @@ std::unique_ptr<WhileStmt> Parser::whileStatement() {
     auto stmt = statement();
     if (stmt) {
       whileStmt->body.push_back(std::move(stmt));
+    } else {
+      if (!check(TokenType::END)) {
+        advance();
+      }
     }
   }
 
   if (!match({TokenType::END})) {
     error("Expected 'end' to close while statement", peek().line);
+    synchronize();
     return nullptr;
   }
 
@@ -55,16 +65,25 @@ std::unique_ptr<RepeatStmt> Parser::repeatStatement() {
     auto stmt = statement();
     if (stmt) {
       repeatStmt->body.push_back(std::move(stmt));
+    } else {
+      if (!check(TokenType::UNTIL)) {
+        advance();
+      }
     }
   }
 
   if (!match({TokenType::UNTIL})) {
     error("Expected 'until' after repeat body", peek().line);
+    synchronize();
     return nullptr;
   }
 
   // parse the until condition
   repeatStmt->condition = expression();
+  if (!repeatStmt->condition) {
+    synchronize();
+    return nullptr;
+  }
 
   skipNewlines();
   return repeatStmt;
@@ -75,11 +94,18 @@ std::unique_ptr<ForStmt> Parser::forStatement() {
 
   if (!match({TokenType::LOCAL})) {
     error("Expected 'local' in for loop declaration", peek().line);
+    while (!check(TokenType::END) && !isAtEnd()) {
+      advance();
+    }
+    if (match({TokenType::END})) {
+      skipNewlines();
+    }
     return nullptr;
   }
 
   if (!check(TokenType::IDENTIFIER)) {
     error("Expected variable name in for loop", peek().line);
+    synchronize();
     return nullptr;
   }
 
@@ -87,21 +113,41 @@ std::unique_ptr<ForStmt> Parser::forStatement() {
 
   if (!match({TokenType::ASSIGN})) {
     error("Expected '=' after for loop variable", peek().line);
+    synchronize();
     return nullptr;
   }
 
   auto start = expression();
+  if (!start) {
+    synchronize();
+    return nullptr;
+  }
 
   if (!match({TokenType::COMMA})) {
     error("Expected ',' after start value", peek().line);
+    synchronize();
     return nullptr;
   }
 
   auto end = expression();
+  if (!end) {
+    synchronize();
+    return nullptr;
+  }
 
   std::unique_ptr<Expr> step = nullptr;
   if (match({TokenType::COMMA})) {
     step = expression();
+    if (!step) {
+      synchronize();
+      return nullptr;
+    }
+  }
+
+  if (!match({TokenType::DO})) {
+    error("Expected 'do' after for loop range", peek().line);
+    synchronize();
+    return nullptr;
   }
 
   skipNewlines();
@@ -119,11 +165,16 @@ std::unique_ptr<ForStmt> Parser::forStatement() {
     auto stmt = statement();
     if (stmt) {
       forStmt->body.push_back(std::move(stmt));
+    } else {
+      if (!check(TokenType::END)) {
+        advance();
+      }
     }
   }
 
   if (!match({TokenType::END})) {
     error("Expected 'end' to close for loop", peek().line);
+    synchronize();
     return nullptr;
   }
 

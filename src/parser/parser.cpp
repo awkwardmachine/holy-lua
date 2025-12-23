@@ -52,11 +52,33 @@ Program Parser::parse() {
       auto stmt = statement();
       if (stmt) {
         program.statements.push_back(std::move(stmt));
+      } else {
+        // if parsing fails just stop there
+        break;
       }
     }
   }
 
   return program;
+}
+
+void Parser::synchronize() {
+  while (!isAtEnd()) {
+    if (previous().type == TokenType::NEWLINE) return;
+    
+    switch (peek().type) {
+      case TokenType::FUNCTION:
+      case TokenType::CLASS:
+      case TokenType::FOR:
+      case TokenType::WHILE:
+      case TokenType::IF:
+      case TokenType::RETURN:
+      case TokenType::END:
+        return;
+      default:
+        advance();
+    }
+  }
 }
 
 } // namespace HolyLua

@@ -73,6 +73,7 @@ private:
   std::unique_ptr<Expr> primary();
   std::unique_ptr<LambdaExpr> lambdaExpression(int line);
   std::unique_ptr<FieldAccessExpr> fieldAccess();
+  void synchronize();
   bool peekNextIs(TokenType type);
 };
 

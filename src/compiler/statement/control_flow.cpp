@@ -232,6 +232,8 @@ void Compiler::compileWhileStmt(const WhileStmt *whileStmt) {
 
 void Compiler::compileForStmt(const ForStmt *forStmt) {
   pushScope();
+  
+  symbolTable[forStmt->varName] = {ValueType::NUMBER, false, true, false, false};
 
   output += indent() + "for (double " + forStmt->varName + " = ";
   output += compileExpr(forStmt->start.get());
@@ -246,9 +248,6 @@ void Compiler::compileForStmt(const ForStmt *forStmt) {
   }
 
   output += ") {\n";
-
-  symbolTable[forStmt->varName] = {ValueType::NUMBER, false, false, true,
-                                   false};
 
   indentLevel++;
 
